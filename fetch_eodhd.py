@@ -12,8 +12,24 @@ def parse_args():
     parser.add_argument('--start', required=True, help='Start date YYYY-MM-DD')
     parser.add_argument('--end', required=True, help='End date YYYY-MM-DD')
     parser.add_argument('--output', default='eodhd_data.csv', help='Output CSV file')
-    parser.add_argument('--api-key', default=os.getenv('EODHD_API_KEY'), help='EODHD API key (or set EODHD_API_KEY)')
+    parser.add_argument('--api-key', default=None, help='EODHD API key')
     return parser.parse_args()
+
+
+def resolve_api_key(cli_key: str | None) -> str | None:
+    """Return the API key from CLI arg, env var, or eodhd_api_key.txt."""
+    if cli_key:
+        return cli_key
+    env_key = os.getenv('EODHD_API_KEY')
+    if env_key:
+        return env_key
+    key_path = os.path.join(os.path.dirname(__file__), 'eodhd_api_key.txt')
+    if os.path.exists(key_path):
+        with open(key_path) as f:
+            key = f.read().strip()
+            if key:
+                return key
+    return None
 
 BASE_URL = 'https://eodhistoricaldata.com/api/intraday/{symbol}'
 
@@ -35,9 +51,10 @@ def fetch_data(symbol, api_key, interval, start, end):
 
 def main():
     args = parse_args()
-    if not args.api_key:
-        raise SystemExit('API key required. Use --api-key or set EODHD_API_KEY.')
-    df = fetch_data(args.symbol, args.api_key, args.interval, args.start, args.end)
+    api_key = resolve_api_key(args.api_key)
+    if not api_key:
+        raise SystemExit('API key required. Use --api-key, set EODHD_API_KEY, or place your key in eodhd_api_key.txt.')
+    df = fetch_data(args.symbol, api_key, args.interval, args.start, args.end)
     df.to_csv(args.output, index=False)
     print(f"Saved {len(df)} rows to {args.output}")
 

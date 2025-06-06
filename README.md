@@ -32,7 +32,9 @@ The resulting CSV file will contain the open, high, low, close, and volume data 
 ## Using the EODHD API
 
 To fetch data from [EOD Historical Data](https://eodhistoricaldata.com),
-install the dependencies as shown above and set your API key:
+install the dependencies as shown above and provide your API key. You can set
+the `EODHD_API_KEY` environment variable or save the key in a file named
+`eodhd_api_key.txt` in this directory:
 
 ```bash
 export EODHD_API_KEY='your_api_key'
