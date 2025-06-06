@@ -7,7 +7,7 @@ This repository contains a simple script for downloading OHLCV data from Trading
 1. Install Python packages:
 
 ```bash
-pip install pandas tvDatafeed
+pip install pandas tvDatafeed requests
 ```
 
 2. (Optional) Set environment variables for your TradingView credentials:
@@ -28,3 +28,21 @@ python fetch_data.py --symbol AAPL --exchange NASDAQ --interval 1h --bars 5000 -
 ```
 
 The resulting CSV file will contain the open, high, low, close, and volume data for the requested symbol.
+
+## Using the EODHD API
+
+To fetch data from [EOD Historical Data](https://eodhistoricaldata.com),
+install the dependencies as shown above and set your API key:
+
+```bash
+export EODHD_API_KEY='your_api_key'
+```
+
+Run `fetch_eodhd.py` with the desired options:
+
+```bash
+python fetch_eodhd.py --symbol AAPL.US --interval 1m --start 2023-01-01 --end 2023-01-31 --output aapl_intraday.csv
+```
+
+The script will download the specified range of OHLCV data and save it as a CSV
+file.
